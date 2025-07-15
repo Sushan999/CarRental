@@ -30,7 +30,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-//Login User
+//Loginnnn User
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -52,7 +52,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
-//Get User data using JWT token
+//Getttt User data using JWT token
 
 export const getUserData = async (req, res) => {
   try {
