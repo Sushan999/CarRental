@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { assets, ownerMenuLinks } from "../../assets/assets";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAppContext } from "../../context/appContext";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
   const { user, axios, fetchUser } = useAppContext();
@@ -14,9 +15,9 @@ const Sidebar = () => {
       formData.append("image", image);
 
       const { data } = await axios.post("/api/owner/update-image", formData);
-      if (data.sucess) {
+      if (data.success) {
         fetchUser();
-        toast.sucess(data.message);
+        toast.success(data.message);
         setImage("");
       } else {
         toast.error(data.message);

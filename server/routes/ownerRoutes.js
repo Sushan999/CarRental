@@ -23,8 +23,8 @@ ownerRouter.post("/delete-car", protect, deleteCar);
 ownerRouter.get("/dashboard", protect, getDashboardData);
 ownerRouter.get(
   "/update-image",
-  upload.single("image"),
   protect,
+  upload.single("image"),
   updateUserImage
 );
 

@@ -9,10 +9,10 @@ export const changeRoleToOwner = async (req, res) => {
   try {
     const { _id } = req.user;
     await User.findByIdAndUpdate(_id, { role: "owner" });
-    res.json({ sucess: true, message: "Now you can list cars" });
+    res.json({ success: true, message: "Now you can list cars" });
   } catch (error) {
     console.log(error.message);
-    res.json({ sucess: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -68,7 +68,7 @@ export const getOwnerCars = async (req, res) => {
   try {
     const { _id } = req.user;
     const cars = await Car.find({ owner: _id });
-    res.json({ sucess: true, cars });
+    res.json({ success: true, cars });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: error.message });
@@ -79,23 +79,25 @@ export const getOwnerCars = async (req, res) => {
 
 export const toggleCarAvailability = async (req, res) => {
   try {
-    const { _id } = req.user;
     const { carId } = req.body;
-    const car = await Car.findById({ carId });
-    res.json({ sucess: true, cars });
+    const { _id } = req.user;
 
-    //checking if car belongs to the user
-    if (car.owner.toString() !== _id.toSting()) {
-      return res.json({ sucess: false, message: "Unauthorized" });
+    const car = await Car.findById(carId);
+    if (!car) {
+      return res.json({ success: false, message: "Car not found" });
+    }
+
+    if (car.owner.toString() !== _id.toString()) {
+      return res.json({ success: false, message: "Unauthorized" });
     }
 
     car.isAvaliable = !car.isAvaliable;
     await car.save();
 
-    res.json({ sucess: true, message: "Availability Toggled" });
+    return res.json({ success: true, message: "Status updated" });
   } catch (error) {
     console.log(error.message);
-    res.json({ sucess: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -105,22 +107,25 @@ export const deleteCar = async (req, res) => {
   try {
     const { _id } = req.user;
     const { carId } = req.body;
-    const car = await Car.findById({ carId });
-    res.json({ sucess: true, cars });
 
-    //checking if car belongs to the user
-    if (car.owner.toString() !== _id.toSting()) {
-      return res.json({ sucess: false, message: "Unauthorized" });
+    const car = await Car.findById(carId);
+    if (!car) {
+      return res.json({ success: false, message: "Car not found" });
+    }
+
+    // Check if car belongs to the user
+    if (car.owner.toString() !== _id.toString()) {
+      return res.json({ success: false, message: "Unauthorized" });
     }
 
     car.owner = null;
     car.isAvaliable = false;
     await car.save();
 
-    res.json({ sucess: true, message: "Car Removed" });
+    return res.json({ success: true, message: "Car Removed" });
   } catch (error) {
     console.log(error.message);
-    res.json({ sucess: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -130,7 +135,7 @@ export const getDashboardData = async (req, res) => {
   try {
     const { _id, role } = req.user;
     if (role !== "owner  ") {
-      return res.json({ sucess: false, message: "Unauthorized" });
+      return res.json({ success: false, message: "Unauthorized" });
     }
 
     const cars = await Car.find({ owner: _id });
@@ -159,10 +164,10 @@ export const getDashboardData = async (req, res) => {
       recentBookings: bookings.slice(0, 3),
       monthlyRevenue,
     };
-    res.json({ sucess: true, dashboardData });
+    res.json({ success: true, dashboardData });
   } catch (error) {
     console.log(error.message);
-    res.json({ sucess: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -170,16 +175,21 @@ export const getDashboardData = async (req, res) => {
 export const updateUserImage = async (req, res) => {
   try {
     const { _id } = req.user;
+    const imageFile = req.file; // ✅ FIXED
 
-    // Upload image to ImageKit
+    if (!imageFile) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No image uploaded" });
+    }
+
     const fileBuffer = fs.readFileSync(imageFile.path);
     const uploadResponse = await imagekit.upload({
       file: fileBuffer,
       fileName: imageFile.originalname,
-      folder: "/cars",
+      folder: "/users", // You had /cars before, but this is user image
     });
 
-    // ✅ Correct URL optimization
     const optimizedImageURL = imagekit.url({
       path: uploadResponse.filePath,
       transformation: [
@@ -188,11 +198,12 @@ export const updateUserImage = async (req, res) => {
         { format: "webp" },
       ],
     });
-    const image = optimizedImageUrl;
-    await User.findByIdAndUpdate(_id, { image });
-    res.json({ sucess: true }, "Image Updated");
+
+    await User.findByIdAndUpdate(_id, { image: optimizedImageURL });
+
+    res.json({ success: true, message: "Image Updated" }); // ✅ FIXED
   } catch (error) {
     console.log(error.message);
-    res.json({ sucess: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };

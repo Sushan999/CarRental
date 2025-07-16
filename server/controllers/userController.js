@@ -68,10 +68,20 @@ export const getUserData = async (req, res) => {
 //Get All cars for the frontend
 export const getCars = async (req, res) => {
   try {
-    const cars = await Car.find({ isAvailable: true });
-    res.json({ success: true, message: cars });
+    const cars = await Car.find();
+    res.json({ success: true, cars: cars });
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
   }
 };
+
+// export const getCars = async (req, res) => {
+//   try {
+//     const cars = await Car.find({ isAvailable: true });
+//     res.json({ success: true, message: cars });
+//   } catch (error) {
+//     console.log(error.message);
+//     res.json({ success: false, message: error.message });
+//   }
+// };
