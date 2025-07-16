@@ -114,7 +114,7 @@ export const changeBookingStatus = async (req, res) => {
       return res.json({ sucess: false, message: "Unauthorized" });
     }
 
-    booking.staus = status;
+    booking.status = status;
     await booking.save();
 
     res.json({ sucess: true, message: "Status Updated" });
