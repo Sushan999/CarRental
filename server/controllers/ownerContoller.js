@@ -134,7 +134,9 @@ export const deleteCar = async (req, res) => {
 export const getDashboardData = async (req, res) => {
   try {
     const { _id, role } = req.user;
-    if (role !== "owner  ") {
+
+    // Fixed: Removed extra spaces after "owner"
+    if (role !== "owner") {
       return res.json({ success: false, message: "Unauthorized" });
     }
 
@@ -149,21 +151,20 @@ export const getDashboardData = async (req, res) => {
       status: "confirmed",
     });
 
-    //calculate monthlyRevenue from bookings where status is confirmed
-
+    // Fixed: Corrected the reduce function syntax
     const monthlyRevenue = bookings
-      .slice()
       .filter((booking) => booking.status === "confirmed")
-      .reduce(() => (acc, booking) => acc + booking.price, 0);
+      .reduce((acc, booking) => acc + booking.price, 0);
 
     const dashboardData = {
       totalCars: cars.length,
       totalBookings: bookings.length,
-      pendingBookings: pendingBookings.length,
+      pendingBookings: pendings.length, // Fixed: Changed from pendingBookings to pendings
       completedBookings: completedBookings.length,
       recentBookings: bookings.slice(0, 3),
       monthlyRevenue,
     };
+
     res.json({ success: true, dashboardData });
   } catch (error) {
     console.log(error.message);

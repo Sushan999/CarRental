@@ -7,8 +7,6 @@ import toast from "react-hot-toast";
 const Dashboard = () => {
   const { axios, isOwner, currency } = useAppContext();
 
-  // const currency = import.meta.env.VITE_CURRENCY;
-
   const [data, setData] = useState({
     totalCars: 0,
     totalBookings: 0,
@@ -43,24 +41,27 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const { data } = await axios.get("/api/owner/dashboard");
+      const { data: responseData } = await axios.get("/api/owner/dashboard");
 
-      if (data.success) {
-        setData(data.dashboardData);
-      }
-      {
-        toast.error(data.message);
+      console.log("Dashboard API Response:", responseData);
+
+      if (responseData.success) {
+        console.log("Dashboard Data:", responseData.dashboardData);
+        setData(responseData.dashboardData);
+      } else {
+        toast.error(responseData.message);
       }
     } catch (error) {
-      toast.error(data.message);
+      console.error("Dashboard fetch error:", error);
+      toast.error(error.message || "Failed to fetch dashboard data");
     }
   };
 
   useEffect(() => {
-    if (!isOwner) {
-      fetchDashboardData();
-    }
-  }, [isOwner]);
+    console.log("isOwner:", isOwner);
+
+    fetchDashboardData();
+  }, []);
 
   return (
     <div className="px-4 pt-10 md:px-10 flex-1">
