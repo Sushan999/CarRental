@@ -20,7 +20,6 @@ const Cars = () => {
   const [filteredCars, setFilteredCars] = useState([]);
 
   const applyFilter = async () => {
-    // ✅ Add safety check for cars
     if (!cars || !Array.isArray(cars)) {
       setFilteredCars([]);
       return;
@@ -53,7 +52,6 @@ const Cars = () => {
 
       if (data.success) {
         setFilteredCars(data.availableCars);
-        // ✅ Fixed typo: lenghth -> length
         if (data.availableCars.length === 0) {
           toast("No cars available");
         }
@@ -121,8 +119,6 @@ const Cars = () => {
           {filteredCars.length > 0 ? (
             filteredCars.map((car, index) => (
               <div key={car._id || index}>
-                {" "}
-                {/* ✅ Better key using car._id */}
                 <CarCard car={car} />
               </div>
             ))

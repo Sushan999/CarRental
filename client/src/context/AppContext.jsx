@@ -46,20 +46,6 @@ export const AppProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-  // const fetchCars = async () => {
-  //   try {
-  //     const { data } = await axios.get("/api/user/cars");
-  //     if (data.success) {
-  //       // ✅ Handle both 'cars' and 'message' properties from backend
-  //       setCars(data.cars || data.message || []);
-  //     } else {
-  //       toast.error(data.message);
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.message);
-  //     setCars([]); // ✅ Set empty array on error
-  //   }
-  // };
 
   // ✅ Logout
   const logout = () => {

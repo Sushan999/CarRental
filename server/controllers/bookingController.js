@@ -12,7 +12,7 @@ export const checkAvailability = async (car, pickupDate, returnDate) => {
     returnDate: { $gte: picked },
   });
 
-  return !booking; // true if not booked, hence available
+  return !booking;
 };
 
 // API route to check availability
