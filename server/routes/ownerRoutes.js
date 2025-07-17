@@ -21,7 +21,7 @@ ownerRouter.post("/toggle-car", protect, toggleCarAvailability);
 ownerRouter.post("/delete-car", protect, deleteCar);
 
 ownerRouter.get("/dashboard", protect, getDashboardData);
-ownerRouter.get(
+ownerRouter.post(
   "/update-image",
   protect,
   upload.single("image"),

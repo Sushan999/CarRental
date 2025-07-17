@@ -176,8 +176,7 @@ export const getDashboardData = async (req, res) => {
 export const updateUserImage = async (req, res) => {
   try {
     const { _id } = req.user;
-    const imageFile = req.file; // ✅ FIXED
-
+    const imageFile = req.file;
     if (!imageFile) {
       return res
         .status(400)
