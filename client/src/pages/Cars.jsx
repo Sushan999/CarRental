@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Title from "../components/Title";
-import { assets, dummyCarData } from "../assets/assets";
+import { assets } from "../assets/assets";
 import CarCard from "../components/CarCard";
 import { useSearchParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
 const Cars = () => {
-  // Get search params from url
   const [searchParams] = useSearchParams();
   const pickupLocation = searchParams.get("pickupLocation");
   const pickupDate = searchParams.get("pickupDate");
@@ -17,32 +16,26 @@ const Cars = () => {
   const [input, setInput] = useState("");
 
   const isSearchData = pickupLocation && pickupDate && returnDate;
-  const [filteredCars, setFilteredCars] = useState([]);
 
-  const applyFilter = async () => {
-    // ✅ Add safety check for cars
-    if (!cars || !Array.isArray(cars)) {
-      setFilteredCars([]);
-      return;
-    }
+  const [filteredCars, setFilteredCars] = useState(cars);
 
+  // Filter function
+  const applyFilter = () => {
     if (input === "") {
       setFilteredCars(cars);
       return;
     }
-
-    // ✅ Add actual filtering logic
-    const filtered = cars
-      .slice()
-      .filter(
-        (car) =>
-          car.brand.toLowerCase().includes(input.toLowerCase()) ||
-          car.model.toLowerCase().includes(input.toLowerCase()) ||
-          car.description.toLowerCase().includes(input.toLowerCase())
-      );
+    const filtered = cars.filter(
+      (car) =>
+        car.brand.toLowerCase().includes(input.toLowerCase()) ||
+        car.model.toLowerCase().includes(input.toLowerCase()) ||
+        car.category.toLowerCase().includes(input.toLowerCase()) ||
+        car.transmission.toLowerCase().includes(input.toLowerCase())
+    );
     setFilteredCars(filtered);
   };
 
+  // Check availability API call
   const searchCarAvailability = async () => {
     try {
       const { data } = await axios.post("/api/bookings/check-availability", {
@@ -50,43 +43,32 @@ const Cars = () => {
         pickupDate,
         returnDate,
       });
-
       if (data.success) {
         setFilteredCars(data.availableCars);
-        // ✅ Fixed typo: lenghth -> length
         if (data.availableCars.length === 0) {
           toast("No cars available");
         }
       } else {
-        toast.error(data.message || "Failed to check availability");
-        setFilteredCars([]);
+        toast.error("Failed to fetch availability");
       }
     } catch (error) {
       toast.error("Error checking availability");
       console.error(error);
-      setFilteredCars([]);
     }
   };
 
-  // ✅ Initialize filteredCars when cars data is available
-  useEffect(() => {
-    if (cars && Array.isArray(cars) && cars.length > 0 && !isSearchData) {
-      setFilteredCars(cars);
-    }
-  }, [cars, isSearchData]);
-
-  // ✅ Handle search data availability check
+  // Run on mount or when search params change
   useEffect(() => {
     if (isSearchData) {
       searchCarAvailability();
+    } else {
+      setFilteredCars(cars);
     }
-  }, [isSearchData]);
+  }, [isSearchData, cars]);
 
-  // ✅ Handle input filtering
+  // Run filter when input or cars change
   useEffect(() => {
-    if (cars && cars.length > 0 && !isSearchData) {
-      applyFilter(); // ✅ Fixed: actually call the function
-    }
+    applyFilter();
   }, [input, cars]);
 
   return (
@@ -98,17 +80,23 @@ const Cars = () => {
         />
 
         <div className="flex items-center bg-white px-4 mt-6 max-w-140 mx-auto w-full h-12 rounded-full shadow">
-          <img src={assets.search_icon} alt="" className="w-4.5 h-4.5 mr-2" />
+          <img
+            src={assets.search_icon}
+            alt="search"
+            className="w-4.5 h-4.5 mr-2"
+          />
           <input
-            onChange={(e) => setInput(e.target.value)} // ✅ Fixed: onChange instead of onClick
+            onChange={(e) => setInput(e.target.value)}
             value={input}
             className="w-full h-full outline-none text-gray-500"
             type="text"
             placeholder="Search by make, model or features"
-            name=""
-            id=""
           />
-          <img src={assets.filter_icon} alt="" className="w-4.5 h-4.5 mr-2" />
+          <img
+            src={assets.filter_icon}
+            alt="filter"
+            className="w-4.5 h-4.5 mr-2"
+          />
         </div>
       </div>
 
@@ -118,19 +106,11 @@ const Cars = () => {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-4 xl:px-20 max-w-7xl mx-auto gap-8">
-          {filteredCars.length > 0 ? (
-            filteredCars.map((car, index) => (
-              <div key={car._id || index}>
-                {" "}
-                {/* ✅ Better key using car._id */}
-                <CarCard car={car} />
-              </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center text-gray-500 py-8">
-              {input ? "No cars match your search." : "No cars available."}
+          {filteredCars.map((car, index) => (
+            <div key={index}>
+              <CarCard car={car} />
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>

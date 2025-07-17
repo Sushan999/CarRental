@@ -3,7 +3,7 @@ import { assets, cityList } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
 
 const Hero = () => {
-  const [pickpLocation, setPickupLocation] = useState("");
+  const [pickupLocation, setPickupLocation] = useState("");
   const { pickupDate, setPickupDate, returnDate, setReturnDate, navigate } =
     useAppContext();
 
@@ -11,10 +11,10 @@ const Hero = () => {
     e.preventDefault();
     navigate(
       "/cars?pickupLocation=" +
-        pickpLocation +
+        pickupLocation +
         "&pickupDate=" +
         pickupDate +
-        "&returnDate" +
+        "&returnDate=" +
         returnDate
     );
   };
@@ -34,7 +34,7 @@ const Hero = () => {
           <div className="flex flex-col items-start gap-2">
             <select
               required
-              value={pickpLocation}
+              value={pickupLocation}
               onChange={(e) => setPickupLocation(e.target.value)}
             >
               <option value="">Pickup Location</option>
@@ -45,7 +45,7 @@ const Hero = () => {
               ))}
             </select>
             <p className="px-1 text-sm text-gray-500">
-              {pickpLocation ? pickpLocation : "Please select Location"}
+              {pickupLocation ? pickupLocation : "Please select Location"}
             </p>
           </div>
 

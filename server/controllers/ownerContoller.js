@@ -135,7 +135,6 @@ export const getDashboardData = async (req, res) => {
   try {
     const { _id, role } = req.user;
 
-    // Fixed: Removed extra spaces after "owner"
     if (role !== "owner") {
       return res.json({ success: false, message: "Unauthorized" });
     }
@@ -151,7 +150,6 @@ export const getDashboardData = async (req, res) => {
       status: "confirmed",
     });
 
-    // Fixed: Corrected the reduce function syntax
     const monthlyRevenue = bookings
       .filter((booking) => booking.status === "confirmed")
       .reduce((acc, booking) => acc + booking.price, 0);
@@ -159,7 +157,7 @@ export const getDashboardData = async (req, res) => {
     const dashboardData = {
       totalCars: cars.length,
       totalBookings: bookings.length,
-      pendingBookings: pendings.length, // Fixed: Changed from pendingBookings to pendings
+      pendingBookings: pendings.length,
       completedBookings: completedBookings.length,
       recentBookings: bookings.slice(0, 3),
       monthlyRevenue,
@@ -187,7 +185,7 @@ export const updateUserImage = async (req, res) => {
     const uploadResponse = await imagekit.upload({
       file: fileBuffer,
       fileName: imageFile.originalname,
-      folder: "/users", // You had /cars before, but this is user image
+      folder: "/users",
     });
 
     const optimizedImageURL = imagekit.url({
@@ -201,7 +199,7 @@ export const updateUserImage = async (req, res) => {
 
     await User.findByIdAndUpdate(_id, { image: optimizedImageURL });
 
-    res.json({ success: true, message: "Image Updated" }); // ✅ FIXED
+    res.json({ success: true, message: "Image Updated" });
   } catch (error) {
     console.log(error.message);
     res.json({ success: false, message: error.message });
