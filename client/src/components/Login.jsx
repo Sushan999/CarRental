@@ -1,15 +1,38 @@
 import React from "react";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
-const Login = ({ setShowLogin }) => {
+const Login = ({}) => {
+  const { setShowLogin, axios, setToken, navigate } = useAppContext();
+
   const [state, setState] = React.useState("login");
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const onSubmitHandler = async (event) => {
-    event.prevenDefault();
-  };
+    event.preventDefault(); // ✅ Fix typo
 
+    try {
+      const endpoint = `/api/user/${state}`; // "login" or "register"
+      const payload =
+        state === "login" ? { email, password } : { name, email, password }; // Only send name during register
+
+      const { data } = await axios.post(endpoint, payload);
+
+      if (data.success) {
+        navigate("/");
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
+        setShowLogin(false);
+        toast.success(state === "login" ? "Logged in!" : "Account created!");
+      } else {
+        toast.error(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
   return (
     <div
       onClick={() => setShowLogin(false)}

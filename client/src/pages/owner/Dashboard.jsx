@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { assets, dummyDashboardData } from "../../assets/assets";
 import Title from "../../components/owner/Title";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
-  const currency = import.meta.env.VITE_CURRENCY;
+  const { axios, isOwner, currency } = useAppContext();
 
   const [data, setData] = useState({
     totalCars: 0,
@@ -11,7 +13,7 @@ const Dashboard = () => {
     pendingBookings: 0,
     completedBookings: 0,
     recentBookings: [],
-    monthlyrevenue: 0,
+    monthlyRevenue: 0,
   });
 
   const dashboardCards = [
@@ -37,8 +39,28 @@ const Dashboard = () => {
     },
   ];
 
+  const fetchDashboardData = async () => {
+    try {
+      const { data: responseData } = await axios.get("/api/owner/dashboard");
+
+      console.log("Dashboard API Response:", responseData);
+
+      if (responseData.success) {
+        console.log("Dashboard Data:", responseData.dashboardData);
+        setData(responseData.dashboardData);
+      } else {
+        toast.error(responseData.message);
+      }
+    } catch (error) {
+      console.error("Dashboard fetch error:", error);
+      toast.error(error.message || "Failed to fetch dashboard data");
+    }
+  };
+
   useEffect(() => {
-    setData(dummyDashboardData);
+    console.log("isOwner:", isOwner);
+
+    fetchDashboardData();
   }, []);
 
   return (
