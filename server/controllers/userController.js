@@ -78,7 +78,7 @@ export const getCars = async (req, res) => {
 
 // export const getCars = async (req, res) => {
 //   try {
-//     const cars = await Car.find({ isAvailable: true });
+//     const cars = await Car.find({ isAvaliable: true });
 //     res.json({ success: true, message: cars });
 //   } catch (error) {
 //     console.log(error.message);

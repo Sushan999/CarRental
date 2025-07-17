@@ -3,16 +3,13 @@ import Car from "../models/Car.js";
 
 // Function to check availability of car for given dates
 export const checkAvailability = async (car, pickupDate, returnDate) => {
-  const picked = new Date(pickupDate);
-  const returned = new Date(returnDate);
-
-  const booking = await Booking.findOne({
+  const bookings = await Booking.find({
     car,
-    pickupDate: { $lte: returned },
-    returnDate: { $gte: picked },
+    pickupDate: { $lte: returnDate },
+    returnDate: { $gte: pickupDate },
   });
 
-  return !booking;
+  return bookings.length == 0;
 };
 
 // API route to check availability
@@ -20,19 +17,19 @@ export const checkAvailabilityOfCar = async (req, res) => {
   try {
     const { location, pickupDate, returnDate } = req.body;
 
-    const cars = await Car.find({ location, isAvailable: true });
+    const cars = await Car.find({ location, isAvaliable: true });
 
     const availableCarsPromises = cars.map(async (car) => {
-      const isAvailable = await checkAvailability(
+      const isAvaliable = await checkAvailability(
         car._id,
         pickupDate,
         returnDate
       );
-      return { ...car._doc, isAvailable };
+      return { ...car._doc, isAvaliable };
     });
 
     let availableCars = await Promise.all(availableCarsPromises);
-    availableCars = availableCars.filter((car) => car.isAvailable === true);
+    availableCars = availableCars.filter((car) => car.isAvaliable === true);
 
     res.json({ success: true, availableCars });
   } catch (error) {
@@ -47,8 +44,8 @@ export const createBooking = async (req, res) => {
     const { _id } = req.user;
     const { car, pickupDate, returnDate } = req.body;
 
-    const isAvailable = await checkAvailability(car, pickupDate, returnDate);
-    if (!isAvailable) {
+    const isAvaliable = await checkAvailability(car, pickupDate, returnDate);
+    if (!isAvaliable) {
       return res.json({ success: false, message: "Car is not available" });
     }
 
