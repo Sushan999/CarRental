@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Cardetails from "./pages/Cardetails";
+import CarDetails from "./pages/CarDetails";
 import Cars from "./pages/Cars";
 import MyBookings from "./pages/MyBookings";
 import Footer from "./components/Footer";
@@ -27,7 +27,7 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/car-details/:id" element={<Cardetails />} />
+        <Route path="/car-details/:id" element={<CarDetails />} />
         <Route path="/cars" element={<Cars />} />
         <Route path="/my-bookings" element={<MyBookings />} />
         <Route path="/owner" element={<Layout />}>
