@@ -95,7 +95,7 @@ export const AppProvider = ({ children }) => {
     pickupDate,
     setPickupDate,
     returnDate,
-    setReturnDate,
+    setReturnDate, //s
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
