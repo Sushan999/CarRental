@@ -19,13 +19,13 @@ export const AppProvider = ({ children }) => {
   const [returnDate, setReturnDate] = useState("");
   const [cars, setCars] = useState([]);
 
-  // ✅ Fetch user from backend
+  // Fetch user from backend
   const fetchUser = async () => {
     try {
       const { data } = await axios.get("/api/user/data");
 
       if (data.success) {
-        setUser(data.user); // ✅ lowercase 'user' in response
+        setUser(data.user);
         setIsOwner(data.user.role === "owner");
       } else {
         setUser(null);
@@ -36,7 +36,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // ✅ Fetch cars from server
+  //  Fetch cars from server
   const fetchCars = async () => {
     try {
       const { data } = await axios.get("/api/user/cars");
@@ -47,7 +47,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // ✅ Logout
+  //  Logout
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
@@ -57,7 +57,7 @@ export const AppProvider = ({ children }) => {
     toast.success("You have been logged out");
   };
 
-  // ✅ On mount, restore token and fetch cars
+  //  On mount, restore token and fetch cars
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -67,7 +67,7 @@ export const AppProvider = ({ children }) => {
     fetchCars();
   }, []);
 
-  // ✅ Fetch user whenever token is set
+  //  Fetch user whenever token is set
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = token;
