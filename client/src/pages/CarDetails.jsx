@@ -49,7 +49,6 @@ const CarDetails = () => {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-        {/* Left: Car Image and Details */}
         <div className="lg:col-span-2">
           <img
             src={car.image}

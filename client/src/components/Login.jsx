@@ -11,7 +11,7 @@ const Login = ({}) => {
   const [password, setPassword] = React.useState("");
 
   const onSubmitHandler = async (event) => {
-    event.preventDefault(); // ✅ Fix typo
+    event.preventDefault();
 
     try {
       const endpoint = `/api/user/${state}`; // "login" or "register"

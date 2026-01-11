@@ -38,7 +38,7 @@ export const addCar = async (req, res) => {
       folder: "/cars",
     });
 
-    // ✅ Correct URL optimization
+    //  Correct URL optimization
     const optimizedImageURL = imagekit.url({
       path: uploadResponse.filePath,
       transformation: [
