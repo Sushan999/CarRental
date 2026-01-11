@@ -17,6 +17,7 @@ export const AppProvider = ({ children }) => {
   const [showLogin, setShowLogin] = useState(false);
   const [pickupDate, setPickupDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
+  const [loadingCars, setLoadingCars] = useState(false);
   const [cars, setCars] = useState([]);
 
   // Fetch user from backend
@@ -38,12 +39,19 @@ export const AppProvider = ({ children }) => {
 
   //  Fetch cars from server
   const fetchCars = async () => {
+    setLoadingCars(true);
     try {
       const { data } = await axios.get("/api/user/cars");
-      if (data.success) setCars(data.cars);
-      else toast.error(data.message);
+
+      if (data.success) {
+        setCars(data.cars);
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoadingCars(false);
     }
   };
 
@@ -95,7 +103,9 @@ export const AppProvider = ({ children }) => {
     pickupDate,
     setPickupDate,
     returnDate,
-    setReturnDate, //s
+    setReturnDate,
+    loadingCars,
+    setLoadingCars, //s
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
